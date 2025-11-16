@@ -1,5 +1,5 @@
 // Simple client-side Auth utility
-export const Auth = {
+export const auth = {
   loginWithWallet(address) {
     const user = { type: 'wallet', address };
     localStorage.setItem('apmUser', JSON.stringify(user));
