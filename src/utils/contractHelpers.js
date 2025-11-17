@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import MarketFactoryJSON from "../contract/MarketFactory.json";
-import MarketJSON from "../contract/Market.json";
+import MarketJSON from "../contract/PredictionMarket.json";
 import APMTokenJSON from "../contract/APMToken.json";
 
 // Replace with your deployed addresses
