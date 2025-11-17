@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
-import MarketFactoryJSON from "../contracts/MarketFactory.json";
-import MarketJSON from "../contracts/Market.json";
-import APMTokenJSON from "../contracts/APMToken.json";
+import MarketFactoryJSON from "../contract/MarketFactory.json";
+import MarketJSON from "../contract/Market.json";
+import APMTokenJSON from "../contract/APMToken.json";
 
 // Replace with your deployed addresses
 const MARKET_FACTORY_ADDRESS = "0xd6a3cfd9653d88fd2a4efe7366bd0a19f74a70e9";
