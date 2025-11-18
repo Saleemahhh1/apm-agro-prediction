@@ -81,7 +81,8 @@ This project integrates:
 
 ## 📁 Project Structure
 
-APM-agro-starter/ │ ├─ package.json ├─ vite.config.js ├─ tailwind.config.js ├─ postcss.config.js ├─ index.html ├─ README.md ├─ .env.example │ ├─ public/ │   └─ (icons/favicons) │ └─ src/ ├─ App.jsx ├─ main.jsx ├─ index.css │ ├─ components/ │   ├─ Header.jsx │   ├─ MarketCard.jsx │   ├─ CreateMarket.jsx │   ├─ ResolvePanel.jsx │   ├─ StakeModal.jsx │   └─ WalletButton.jsx │ ├─ pages/ │   ├─ Home.jsx │   └─ MarketDetails.jsx │ ├─ contracts/ │   ├─ MarketFactory.json │   ├─ Market.json │   └─ APMToken.json │ ├─ utils/ │   ├─ contractHelpers.js │   └─ aiAssistant.js │ └─ assets/ └─ screenshots/ ├─ mint_tokens.png ├─ create_market.png ├─ place_bet.png └─ reward.png
+APM-agro-prediction/ │ ├─ package.json ├─ vite.config.js ├─ tailwind.config.js ├─ postcss.config.js ├─ index.html ├─ README.md ├─ .env.example │ ├─ public/ │   └─ (icons/favicons) │ └─ src/ ├─ App.jsx ├─ main.jsx ├─ index.css │ ├─ components/ │   ├─ Header.jsx │   ├─ MarketCard.jsx │   ├─ CreateMarket.jsx │   ├─ ResolvePanel.jsx │   ├─ StakeModal.jsx │   └─ WalletButton.jsx │ ├─ pages/ │   ├─ Home.jsx │   └─ MarketDetails.jsx │ ├─ contracts/ │   ├─ MarketFactory.json │   ├─ Market.json │   └─ APMToken.json │ ├─ utils/ │   ├─ contractHelpers.js │   └─ aiAssistant.js|-auth.jsx
+│ |-Auth.js└─ assets/ └─ screenshots/ ├─ mint_tokens.png ├─ create_market.png ├─ place_bet.png └─ reward.png
 
 ---
 
