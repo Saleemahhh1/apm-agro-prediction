@@ -22,7 +22,7 @@ export default function Header({ isBNBPrimary, authed, onGetStarted, onLogout })
               </span>
             </h1>
             <p className="text-xs text-white/60">
-              decentralized agriculture forecasting
+              decentralized agriculture forecasts
             </p>
           </div>
         </div>
