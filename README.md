@@ -8,7 +8,7 @@
 
 ## 🚀 Live Demo
 
-- Frontend: [Live on Vercel](https://apm-agro.vercel.app)  
+- Frontend: [Live on Vercel](https://apm-agro-prediction.vercel.app)  
 
 
 ---
