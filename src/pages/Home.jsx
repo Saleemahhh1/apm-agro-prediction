@@ -12,7 +12,7 @@ export default function Home() {
   const fetchMarkets = async () => {
     setLoading(true);
     try {
-      const data = await getAllMarkets();
+      const data = await allMarkets();
       setMarkets(data);
     } catch (e) {
       console.error(e);
