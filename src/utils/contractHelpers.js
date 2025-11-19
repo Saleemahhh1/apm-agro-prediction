@@ -34,7 +34,7 @@ export const initContracts = async () => {
 };
 
 // =============== GET ALL MARKETS =================
-export const allMarket = async () => {
+export const allMarkets = async () => {
   await initContracts();
 
   const marketAddresses = await marketFactoryContract.allMarkets();
