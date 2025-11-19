@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getAllMarkets } from "../utils/contractHelpers";
+import { allMarkets } from "../utils/contractHelpers";
 import MarketCard from "../components/MarketCard";
 import { checkPredictionAndResolve } from "../utils/aiAssistant";
 
