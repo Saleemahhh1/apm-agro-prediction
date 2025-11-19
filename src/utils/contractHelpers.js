@@ -37,7 +37,7 @@ export const initContracts = async () => {
 export const allMarkets = async () => {
   await initContracts();
 
-  const marketAddresses = await marketFactoryContract.allMarkets();
+  const marketAddresses = await marketFactoryContract.getAllMarkets();
 
   const markets = await Promise.all(
     marketAddresses.map(async (addr) => {
