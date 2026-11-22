@@ -6,7 +6,8 @@ import MarketJSON from "../contract/PredictionMarket.json";
 import APMTokenJSON from "../contract/APMToken.json";
 
 // Replace with your deployed addresses
-const MARKET_FACTORY_ADDRESS = "0xd6a3cfd9653d88fd2a4efe7366bd0a19f74a70e9";
+const MARKET_FACTORY_ADDRESS =
+  "0x443E3299497911410Cf64FAa82C6758d83f1F6C5";
 const APM_TOKEN_ADDRESS = "0x97b619d007ac9fC06109b5162da22603ee316470";
 
 let provider;
