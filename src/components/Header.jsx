@@ -2,7 +2,7 @@ import React from 'react'
 import clsx from 'clsx'
 import WalletButton from './WalletButton'
 
-export default function Header({ isBNBPrimary, authed, onGetStarted, onLogout }) {
+export default function Header({ isBNBPrimary, authed, account, onConnectWallet, onGetStarted, onLogout }) {
   return (
     <header className="flex items-center justify-between px-6 py-4 bg-darkBg/70 backdrop-blur-md sticky top-0 z-50">
       {/* 🌿 Logo + Title */}
@@ -54,7 +54,7 @@ export default function Header({ isBNBPrimary, authed, onGetStarted, onLogout })
         )}
 
         {/* Wallet Connect Button (still shows when logged in) */}
-        <WalletButton />
+        <WalletButton account={account} onConnect={onConnectWallet} />
       </div>
     </header>
   )
