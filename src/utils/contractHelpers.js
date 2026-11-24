@@ -125,6 +125,11 @@ export const getMarketCreator = async (marketId) => {
   return market.owner();
 };
 
+export const getFactoryOwner = async () => {
+  const factory = await getFactoryContract();
+  return factory.owner();
+};
+
 export const stakeOnMarket = async (marketId, outcome, amount) => {
   const market = await getMarketContract(marketId);
   const tokenAddress = await market.token();
