@@ -1,21 +1,21 @@
-import React, { useState } from "react";
+import React from "react";
 import { short } from "../utils/format";
+import { connectMetaMask } from "../utils/walletProvider";
 
-export default function WalletButton({ account: connectedAccount, onConnect }) {
-  const [localAccount, setLocalAccount] = useState(null);
-  const account = connectedAccount || localAccount;
-
+export default function WalletButton({ account, onConnect }) {
   async function connect() {
-    if (!window.ethereum) return alert("Please install MetaMask or Binance Wallet");
     try {
-      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      setLocalAccount(accounts[0]);
-      onConnect?.(accounts[0]);
+      const { account: address } = await connectMetaMask();
+      onConnect?.(address);
     } catch (error) {
       console.error(error);
-      alert(error?.message || "Wallet connection failed");
+      alert(error?.message || "MetaMask connection failed");
     }
   }
 
-  return <button onClick={connect} className="bg-white text-darkBg px-4 py-2 rounded">{account ? short(account) : "Connect Wallet"}</button>;
+  return (
+    <button onClick={connect} className="bg-white text-darkBg px-4 py-2 rounded">
+      {account ? short(account) : "Connect MetaMask"}
+    </button>
+  );
 }
