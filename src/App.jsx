@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
 import Landing from "./pages/Landing";
 import GetStartedModal from "./components/GetStartedModal";
@@ -12,13 +12,12 @@ export default function App() {
   const [account, setAccount] = useState(() => auth.getUser()?.address || null);
   const [authed, setAuthed] = useState(() => Boolean(auth.getUser()));
   const [isBNBPrimary, setIsBNBPrimary] = useState(true);
-  const location = useLocation();
 
   const handleConnectWallet = async () => {
     if (!window.ethereum) return alert("Install MetaMask or Binance Wallet");
     try {
       const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      const user = auth.loginWithWallet(accounts[0]);
+      auth.loginWithWallet(accounts[0]);
       setAccount(accounts[0]);
       setAuthed(true);
       setShowModal(false);
@@ -63,7 +62,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-darkBg text-white">
-      <Header isBNBPrimary={isBNBPrimary} authed={authed} onGetStarted={() => setShowModal(true)} onLogout={handleLogout} />
+      <Header isBNBPrimary={isBNBPrimary} authed={authed} account={account} onConnectWallet={(address) => { auth.loginWithWallet(address); setAccount(address); setAuthed(true); }} onGetStarted={() => setShowModal(true)} onLogout={handleLogout} />
       <Routes>
         <Route path="/" element={authed ? <Home account={account} /> : <Landing onGetStarted={() => setShowModal(true)} />} />
         <Route path="/market/:id" element={<MarketDetails />} />
