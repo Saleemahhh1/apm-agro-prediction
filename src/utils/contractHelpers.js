@@ -134,10 +134,8 @@ export const stakeOnMarket = async (marketId, outcome, amount) => {
   const value = parseUnits(String(amount), decimals);
   if (value <= 0n) throw new Error("Stake amount must be greater than zero.");
 
-  const [account, currentAllowance] = await Promise.all([
-    activeSigner.getAddress(),
-    token.allowance(await activeSigner.getAddress(), marketId),
-  ]);
+  const account = await activeSigner.getAddress();
+  const currentAllowance = await token.allowance(account, marketId);
   if (currentAllowance < value) {
     const approval = await token.approve(marketId, value);
     await approval.wait();
@@ -151,9 +149,10 @@ export const stakeOnMarket = async (marketId, outcome, amount) => {
 };
 
 export const resolveMarket = async (marketId, outcome) => {
+  const factory = await getFactoryContract();
   const market = await getMarketContract(marketId);
   const choice = outcome === "YES" ? await market.YES() : await market.NO();
-  const tx = await market.setResult(choice);
+  const tx = await factory.resolveMarket(marketId, choice);
   return tx.wait();
 };
 
@@ -165,3 +164,36 @@ export const createMarket = async ({ question, deadline }) => {
 };
 
 export const getContractAddresses = () => ({ ...addresses });
+
+export const claimWinnings = async (marketId) => {
+  const market = await getMarketContract(marketId);
+  const tx = await market.claim();
+  return tx.wait();
+};
+
+export const getTokenBalance = async (walletAddress) => {
+  const token = await getTokenContract();
+  const { signer: activeSigner } = await getWalletContext();
+  const address = walletAddress || await activeSigner.getAddress();
+  const [balance, decimals, symbol] = await Promise.all([
+    token.balanceOf(address),
+    token.decimals(),
+    token.symbol(),
+  ]);
+  return { balance: formatUnits(balance, decimals), symbol };
+};
+
+export const getVestingPosition = async (beneficiary) => {
+  const manager = await getVestingManagerContract();
+  const [position, claimable, outstanding] = await Promise.all([
+    manager.vestings(beneficiary),
+    manager.calculatableVest(beneficiary),
+    manager.totalOutstanding(),
+  ]);
+  return { position, claimable, outstanding };
+};
+
+export const getLiquidityLock = async (lockId) => {
+  const locker = await getLiquidityLockerContract();
+  return locker.getLock(lockId);
+};
