@@ -1,329 +1,111 @@
-## APM-Agro Prediction Market
+# APM-Agro Prediction Market
 
-![APM-Agro Logo](./src/assets/apm-logo.png)
+**Turning Local Insights into Global Intelligence**
 
-**Decentralized Agriculture Forecasting & Data Democratization built on Binance Smart Chain (BNB Testnet)**
+APM-Agro is a decentralized agriculture prediction-market frontend built with React, Vite, ethers.js and the BNB Smart Chain testnet. It retains the original dark, green and gold visual identity and the existing public brand assets.
 
----
+## Current application capabilities
 
-## 🚀 Live Demo
+- Wallet connection through injected EVM wallets such as MetaMask and Binance Wallet.
+- BNB Testnet chain-ID validation before contract interactions.
+- On-chain market discovery through the deployed MarketFactory.
+- Market creation using the current MarketFactory ABI.
+- YES/NO staking using the PredictionMarket contract and ERC-20 allowance flow.
+- Market-owner resolution through the MarketFactory.
+- Winner-claim interaction with the PredictionMarket contract.
+- Read helpers for APM token balances, vesting positions and liquidity-lock records.
+- Manual refresh of on-chain market data.
 
-- Frontend: [Live on Vercel](https://apm-agro-prediction.vercel.app)  
+AI is not permitted to settle markets automatically. Any AI or oracle workflow should produce evidence or a proposed result for an authorized resolver; settlement must remain an explicit, permission-checked on-chain action.
 
+## Technology
 
----
+- React 18
+- Vite 5
+- Tailwind CSS 3
+- ethers.js 6
+- React Router 6
+- Framer Motion
+- react-globe.gl
 
-## 🏗️ Project Overview
+## Repository layout
 
-**APM-Agro** is a **decentralized prediction market** for agriculture, enabling users to:
+```text
+public/                 Brand icons and favicons
+src/components/         Existing UI components
+src/pages/              Landing, dashboard and market details
+src/contract/           Five current contract ABI JSON files
+src/utils/              Wallet, contract and formatting helpers
+.env.example            Public contract-address configuration template
+```
 
-- Create prediction markets for crop prices or agricultural events
-- Stake **APM tokens** on YES/NO outcomes
-- Participate in automated, AI-assisted prediction checking
-- Receive rewards automatically via smart contracts
-- Connect wallets using **MetaMask** or **Binance Wallet**
+## Local development
 
-This project integrates:
+1. Install Node.js (18 or newer recommended).
+2. Install packages:
 
-- **Smart Contracts:**
-  - **APMToken:** [Verified on Sourcify](https://repo.sourcify.dev/97/0x97b619d007ac9fC06109b5162da22603ee316470/)
-  - **PredictionMarket:** [Verified on Sourcify](https://repo.sourcify.dev/97/0xdD2A365eaB1692f27C481a78ae7c85b9c303e5D1/)
-  - **MarketFactory:** `0xd6a3cfd9653d88fd2a4efe7366bd0a19f74a70e9` (BNB Testnet)
+   ```bash
+   npm install
+   ```
 
----
+3. Copy `.env.example` to `.env` and fill in the deployed BNB Testnet addresses.
+4. Start the Vite server:
 
-## 🖥️ Features
+   ```bash
+   npm run dev
+   ```
 
-### Landing & Dashboard
-- Dark hybrid dashboard with **green & gold theme**  
-- **Animated BNB & APM tickers** on landing page  
-- “Get Started” button for login/register  
+5. Create a production build:
 
-### User Authentication
-- **Connect Wallet** (MetaMask / Binance Wallet)  
-- **Email & Password Registration**  
+   ```bash
+   npm run build
+   ```
 
-### Prediction Market Features
-- View all prediction markets (Open / Closed / Resolved)  
-- MarketCard shows:
-  - Question & description  
-  - YES/NO staking prices  
-  - Liquidity bar  
-  - Live asset price updates  
+## Required Vercel environment variables
 
-- **Create Market** (Admin / Authorized user)  
-- **Stake APM tokens** on predictions  
-- **Resolve market** manually or via AI Assistant  
+Set these in Vercel Project Settings → Environment Variables, then redeploy:
 
-### AI Assistant
-- Fetch live asset prices from Binance API  
-- Check if predictions are correct automatically  
-- Trigger smart contract payout for winners  
-- Runs every 30 seconds  
+| Variable | Value |
+| --- | --- |
+| `VITE_CHAIN_ID` | `97` |
+| `VITE_NETWORK` | `BNB Testnet` |
+| `VITE_MARKET_FACTORY_ADDRESS` | Deployed MarketFactory address |
+| `VITE_APM_TOKEN_ADDRESS` | Deployed APMToken address |
+| `VITE_PREDICTION_MARKET_ADDRESS` | Deployed PredictionMarket address (reserved for direct-market configuration) |
+| `VITE_LIQUIDITY_LOCKER_ADDRESS` | Deployed LiquidityLocker address |
+| `VITE_VESTING_MANAGER_ADDRESS` | Deployed VestingManager address |
 
-### Responsive Design & UI/UX
-- Fully responsive across desktop, tablet, mobile  
-- Interactive hover effects on cards and buttons  
-- Professional color theme: green, gold, dark background  
+The frontend currently discovers individual prediction-market addresses from MarketFactory. The PredictionMarket address variable is retained for explicit configuration and future use.
 
----
+**Important:** Every variable prefixed with `VITE_` is bundled into browser-visible frontend code. Only public contract addresses and non-sensitive public configuration belong here. Never put private keys, seed phrases, API secrets, database service-role keys or passwords in VITE variables.
 
-## ⚙️ Tech Stack
+## Contract integration notes
 
-- **Frontend:** React + Vite + Tailwind CSS  
-- **State Management:** React useState / useEffect  
-- **Smart Contracts Integration:** ethers.js  
-- **Blockchain:** Binance Smart Chain (BNB Testnet)  
-- **API:** Binance public API for live asset prices  
-- **Deployment:** Vercel / Netlify  
+The checked-in ABIs are treated as the source of truth for function names and arguments:
 
----
+- MarketFactory: `getAllMarkets`, `createMarket(question, deadline, feeBps)`, `defaultFeeBps`, and `resolveMarket(market, winningChoice)`.
+- PredictionMarket: `question`, `getMarketStatus`, pool getters, `placeBet(choice, amount)`, and `claim()`.
+- APMToken: ERC-20 `balanceOf`, `allowance`, `approve`, `decimals` and `symbol`.
+- LiquidityLocker: `getLock`, `locksCount`, `lock` and `withdraw`.
+- VestingManager: `vestings`, `calculatableVest`, `releaseTokens` and allocation getters.
 
-## 📁 Project Structure
+The market factory ABI stores a question and deadline; it does not expose a description field. The dashboard therefore does not pretend that the optional description input is saved on-chain.
 
-APM-agro-prediction/ │ ├─ package.json ├─ vite.config.js ├─ tailwind.config.js ├─ postcss.config.js ├─ index.html ├─ README.md ├─ .env.example │ ├─ public/ │   └─ (icons/favicons) │ └─ src/ ├─ App.jsx ├─ main.jsx ├─ index.css │ ├─ components/ │   ├─ Header.jsx │   ├─ MarketCard.jsx │   ├─ CreateMarket.jsx │   ├─ ResolvePanel.jsx │   ├─ StakeModal.jsx │   └─ WalletButton.jsx │ ├─ pages/ │   ├─ Home.jsx │   └─ MarketDetails.jsx │ ├─ contracts/ │   ├─ MarketFactory.json │   ├─ Market.json │   └─ APMToken.json │ ├─ utils/ │   ├─ contractHelpers.js │   └─ aiAssistant.js|-auth.jsx
-│ |-Auth.js└─ assets/ └─ screenshots/ ├─ mint_tokens.png ├─ create_market.png ├─ place_bet.png └─ reward.png
+## Authentication status
 
----
+Wallet connection is supported. The email/password form is a visual placeholder only and does not create authenticated accounts. Production email authentication requires a real provider and server-side configuration.
 
-## ⚡ Getting Started
+## Deployment checklist
 
-1. Clone repo:
-```bash
-git clone https://github.com/YourUsername/APM-agro.git
-cd APM-agro
-
-2. Install dependencies:
-
-
-
-npm install
-
-3. Add environment variables:
-
-
-
-cp .env.example .env
-# Edit .env with deployed contract addresses
-
-4. Run development server:
-
-
-
-npm run dev
-
-5. Build for production:
-
-
-
-npm run build
-
-6. Deploy to Vercel or Netlify:
-
-
-
-Build folder: dist/
-
-Set environment variables in hosting platform
-
-
-
----
-
-🔗 Smart Contract Addresses (BNB Testnet)
-
-Contract	Address
-
-MarketFactory	0xd6a3cfd9653d88fd2a4efe7366bd0a19f74a70e9
-PredictionMarket	0xdD2A365eaB1692f27C481a78ae7c85b9c303e5D1
-APMToken	0x97b619d007ac9fC06109b5162da22603ee316470
-
-
-
----
-
-🛠️ Features Screenshots
-
-
-
-
-
-
-
----
-
-🎯 Future Improvements
-
-Add multi-chain support
-
-Integrate Chainlink oracle for real-time price feeds
-
-Enhance AI prediction logic with ML models
-
-Enable notifications for prediction results
-
-
-
----
-
-🙏 Acknowledgements
-
-Built for Hackathon submission
-
-Inspired by decentralized finance & prediction market platforms
-
-Special thanks to friends & mentors who guided the process
-
----
-
-📝 APM-Agro Hackathon Submission Note
-
-Project Name: APM-Agro Prediction Market
-Team / Developer: Alamin Muhammad (solo / team name)
-Hackathon: [Insert Hackathon Name]
-Submission Date: [Insert Date]
-
-
----
-
-🌐 Live Frontend
-
-https://apm-agro.vercel.app
-(Frontend deployed on Vercel, fully functional, responsive, and connected to BNB Testnet)
-
-
----
-
-🔗 Smart Contracts (BNB Testnet)
-
-Contract	Address	Verified Link
-
-MarketFactory	0xd6a3cfd9653d88fd2a4efe7366bd0a19f74a70e9	N/A
-PredictionMarket	0xdD2A365eaB1692f27C481a78ae7c85b9c303e5D1	Sourcify
-APMToken	0x97b619d007ac9fC06109b5162da22603ee316470	Sourcify
-
-
-Network: Binance Smart Chain – Testnet
-
-
----
-
-🏗️ Project Overview
-
-APM-Agro is a decentralized agriculture prediction market, designed to:
-
-Enable users to create, participate, and stake predictions on agricultural events (crop prices, market trends).
-
-Automate reward distribution using AI-assisted prediction checking.
-
-Provide live asset price updates from Binance API for accurate market resolutions.
-
-Offer wallet connection via MetaMask or Binance Wallet.
-
-Support registration/login with email & password for hackathon demo purposes.
-
-
-Key Goal: Turn local agricultural insights into global intelligence while empowering users with decentralized forecasting and token-based participation.
-
-
----
-
-⚡ Features
-
-Landing Page: Animated BNB/APM tickers, Get Started button, hybrid dark-green-gold theme
-
-User Authentication: Wallet connect + email/password registration
-
-Prediction Markets: View all markets (Open/Closed/Resolved), stake APM tokens, create markets
-
-AI Assistant: Auto-check predictions against live prices, trigger payouts automatically
-
-Live Prices: Fetches real-time prices from Binance API every 15 seconds
-
-Responsive Design: Desktop, tablet, mobile, professional UI/UX
-
-
-
----
-
-📁 Project Structure
-
-APM-agro-starter/
-├─ package.json
-├─ vite.config.js
-├─ src/
-│   ├─ App.jsx
-│   ├─ main.jsx
-│   ├─ components/
-│   ├─ pages/
-│   ├─ contracts/
-│   ├─ utils/
-│   └─ assets/screenshots/
-
-
----
-
-🛠️ Tech Stack
-
-Frontend: React + Vite + Tailwind CSS
-
-Blockchain: Binance Smart Chain (BNB Testnet)
-
-Smart Contracts: Solidity (APMToken, MarketFactory, PredictionMarket)
-
-Integration: ethers.js for frontend interaction
-
-API: Binance public API for live asset prices
-
-
-
----
-
-📸 Screenshots (Optional)
-
-Mint tokens: 
-
-Create market: 
-
-Place bet: 
-
-Rewards: 
-
-
-
----
-
-🎯 Future Improvements
-
-Multi-chain support (Ethereum, Polygon)
-
-Chainlink oracle integration for secure price feeds
-
-Enhanced AI prediction with ML models
-
-User notifications & email alerts
-
-
-
----
-
-✅ Submission Notes
-
-Frontend live URL tested
-
-Smart contracts verified on Sourcify
-
-All features demoed on BNB Testnet
-
-No private keys exposed
-
-Ready for hackathon evaluation
-
-
----
-
-📄 License
-
-MIT License
-
----
+- Configure all five deployed contract addresses in Vercel.
+- Confirm the addresses belong to BNB Testnet (chain ID 97).
+- Verify the deployed contracts and owner/treasury permissions.
+- Run `npm run build` before deployment.
+- Test market creation, token approval, staking, authorized resolution and claiming with test wallets.
+- Test the deployed Vercel URL on mobile and desktop.
+- Do not enable AI-driven autonomous settlement.
+
+## Live project
+
+- Frontend: https://apm-agro-prediction.vercel.app
+- Source: https://github.com/Saleemahhh1/apm-agro-prediction
