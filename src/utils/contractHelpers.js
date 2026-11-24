@@ -5,6 +5,7 @@ import PredictionMarketABI from "../contract/PredictionMarket.json";
 import APMTokenABI from "../contract/APMToken.json";
 import LiquidityLockerABI from "../contract/LiquidityLocker.json";
 import VestingManagerABI from "../contract/VestingManager.json";
+import { getMetaMaskProvider } from "./walletProvider";
 
 const addresses = {
   factory: import.meta.env.VITE_MARKET_FACTORY_ADDRESS || import.meta.env.VITE_MARKET_FACTORY,
@@ -18,8 +19,9 @@ let provider;
 let signer;
 
 async function getWalletContext() {
-  if (!window.ethereum) throw new Error("Wallet not found. Install MetaMask or Binance Wallet.");
-  provider = new BrowserProvider(window.ethereum);
+  const injectedProvider = getMetaMaskProvider();
+  if (!injectedProvider) throw new Error("MetaMask was not detected. Install or enable MetaMask, then refresh APM Agro.");
+  provider = new BrowserProvider(injectedProvider);
   signer = await provider.getSigner();
 
   const expectedChainId = Number(import.meta.env.VITE_CHAIN_ID || 97);
