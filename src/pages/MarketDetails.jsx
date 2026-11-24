@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import {
   getMarketById,
   getMarketStatus,
-  getMarketCreator,
+  getFactoryOwner,
   claimWinnings,
 } from "../utils/contractHelpers";
 import StakeModal from "../components/StakeModal";
@@ -24,14 +24,14 @@ export default function MarketDetails() {
   const load = useCallback(async () => {
     setError("");
     try {
-      const [details, currentStatus, owner] = await Promise.all([
+      const [details, currentStatus, factoryOwner] = await Promise.all([
         getMarketById(id),
         getMarketStatus(id),
-        getMarketCreator(id),
+        getFactoryOwner(),
       ]);
       setMarket(details);
       setStatus(currentStatus);
-      setCreator(owner);
+      setCreator(factoryOwner);
       if (window.ethereum) {
         const accounts = await window.ethereum.request({ method: "eth_accounts" });
         setAccount(accounts[0] || "");
