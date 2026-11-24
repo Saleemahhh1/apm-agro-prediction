@@ -14,13 +14,13 @@ export default function GetStartedModal({ open, onClose, onConnectWallet, onRegi
         </div>
 
         <div className="flex gap-4 mb-4">
-          <button onClick={()=>setTab('wallet')} className={tab==='wallet' ? 'bg-apmGreen px-4 py-2 rounded' : 'px-4 py-2 rounded bg-white/5'}>Connect Wallet</button>
+          <button onClick={()=>setTab('wallet')} className={tab==='wallet' ? 'bg-apmGreen px-4 py-2 rounded' : 'px-4 py-2 rounded bg-white/5'}>Connect MetaMask</button>
           <button onClick={()=>setTab('email')} className={tab==='email' ? 'bg-apmGreen px-4 py-2 rounded' : 'px-4 py-2 rounded bg-white/5'}>Register with Email</button>
         </div>
 
         {tab === 'wallet' ? (
           <div>
-            <p className="text-white/70 mb-3">Connect with MetaMask or Binance Wallet to sign in.</p>
+            <p className="text-white/70 mb-3">Connect your MetaMask wallet to access APM Agro and your APM tokens.</p>
             <div className="flex gap-3">
               <button onClick={onConnectWallet} className="bg-apmGold text-darkBg px-4 py-2 rounded">Connect Wallet</button>
             </div>
