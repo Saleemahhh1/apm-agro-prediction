@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { allMarkets } from "../utils/contractHelpers";
 import MarketCard from "../components/MarketCard";
+import CreateMarket from "../components/CreateMarket";
 
 export default function Home() {
   const [markets, setMarkets] = useState([]);
@@ -31,6 +32,7 @@ export default function Home() {
 
   return (
     <div className="px-6 py-8 max-w-7xl mx-auto text-white">
+      <CreateMarket onCreated={fetchMarkets} />
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <h1 className="text-3xl font-bold">Prediction Markets</h1>
         <button onClick={fetchMarkets} disabled={loading} className="px-4 py-2 rounded-lg border border-apmGold/50 text-apmGold disabled:opacity-50">
