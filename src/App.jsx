@@ -6,6 +6,7 @@ import GetStartedModal from "./components/GetStartedModal";
 import Home from "./pages/Home";
 import MarketDetails from "./pages/MarketDetails";
 import { auth } from "./utils/Auth";
+import { connectMetaMask, getMetaMaskProvider } from "./utils/walletProvider";
 
 export default function App() {
   const [showModal, setShowModal] = useState(false);
@@ -14,11 +15,10 @@ export default function App() {
   const [isBNBPrimary, setIsBNBPrimary] = useState(true);
 
   const handleConnectWallet = async () => {
-    if (!window.ethereum) return alert("Install MetaMask or Binance Wallet");
     try {
-      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
-      auth.loginWithWallet(accounts[0]);
-      setAccount(accounts[0]);
+      const { account: address } = await connectMetaMask();
+      auth.loginWithWallet(address);
+      setAccount(address);
       setAuthed(true);
       setShowModal(false);
     } catch (error) {
@@ -44,7 +44,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!window.ethereum) return undefined;
+    const walletProvider = getMetaMaskProvider();
+    if (!walletProvider) return undefined;
     const handleAccountsChanged = (accounts) => {
       if (!accounts.length) {
         auth.logout();
@@ -56,8 +57,8 @@ export default function App() {
         setAuthed(true);
       }
     };
-    window.ethereum.on?.("accountsChanged", handleAccountsChanged);
-    return () => window.ethereum.removeListener?.("accountsChanged", handleAccountsChanged);
+    walletProvider.on?.("accountsChanged", handleAccountsChanged);
+    return () => walletProvider.removeListener?.("accountsChanged", handleAccountsChanged);
   }, []);
 
   return (
