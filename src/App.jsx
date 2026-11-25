@@ -17,6 +17,10 @@ export default function App() {
 
   const handleConnectWallet = async () => {
     try {
+      if (!appKit) {
+        alert("Wallet connection is not configured yet. Add VITE_PROJECT_ID in Vercel Environment Variables and redeploy.");
+        return;
+      }
       await appKit.open({ view: "Connect" });
     } catch (error) {
       console.error(error);
@@ -29,7 +33,7 @@ export default function App() {
   };
 
   const handleLogout = async () => {
-    try { await appKit.disconnect(); } catch (error) { console.warn("Wallet disconnect:", error); }
+    try { if (appKit) await appKit.disconnect(); } catch (error) { console.warn("Wallet disconnect:", error); }
     auth.logout();
     setAuthed(false);
     setAccount(null);
@@ -43,6 +47,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (!appKit) return undefined;
     const unsubscribeAccount = appKit.subscribeAccount((state) => {
       if (state?.isConnected && state?.address) {
         auth.loginWithWallet(state.address);
