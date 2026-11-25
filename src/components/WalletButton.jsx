@@ -1,21 +1,20 @@
 import React from "react";
 import { short } from "../utils/format";
-import { connectMetaMask } from "../utils/walletProvider";
+import { appKit } from "../utils/appKit";
 
-export default function WalletButton({ account, onConnect }) {
-  async function connect() {
+export default function WalletButton({ account }) {
+  async function handleClick() {
     try {
-      const { account: address } = await connectMetaMask();
-      onConnect?.(address);
+      await appKit.open({ view: "Connect" });
     } catch (error) {
       console.error(error);
-      alert(error?.message || "MetaMask connection failed");
+      alert(error?.message || "Wallet selector could not be opened.");
     }
   }
 
   return (
-    <button onClick={connect} className="bg-white text-darkBg px-4 py-2 rounded">
-      {account ? short(account) : "Connect MetaMask"}
+    <button onClick={handleClick} className="bg-white text-darkBg px-4 py-2 rounded">
+      {account ? short(account) : "Connect Wallet"}
     </button>
   );
 }
