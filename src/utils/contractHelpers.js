@@ -5,7 +5,7 @@ import PredictionMarketABI from "../contract/PredictionMarket.json";
 import APMTokenABI from "../contract/APMToken.json";
 import LiquidityLockerABI from "../contract/LiquidityLocker.json";
 import VestingManagerABI from "../contract/VestingManager.json";
-import { getMetaMaskProvider } from "./walletProvider";
+import { getActiveWalletProvider } from "./walletProvider";
 
 const addresses = {
   factory: import.meta.env.VITE_MARKET_FACTORY_ADDRESS || import.meta.env.VITE_MARKET_FACTORY,
@@ -19,8 +19,8 @@ let provider;
 let signer;
 
 async function getWalletContext() {
-  const injectedProvider = getMetaMaskProvider();
-  if (!injectedProvider) throw new Error("MetaMask was not detected. Install or enable MetaMask, then refresh APM Agro.");
+  const injectedProvider = getActiveWalletProvider();
+  if (!injectedProvider) throw new Error("Connect a wallet first using the APM Agro wallet selector.");
   provider = new BrowserProvider(injectedProvider);
   signer = await provider.getSigner();
 
