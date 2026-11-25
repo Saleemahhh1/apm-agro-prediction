@@ -21,6 +21,10 @@ export default function App() {
         alert("Wallet connection is not configured yet. Add VITE_PROJECT_ID in Vercel Environment Variables and redeploy.");
         return;
       }
+      if (!appKit) {
+        alert("Wallet connection is not configured yet. Add VITE_PROJECT_ID in Vercel Environment Variables.");
+        return;
+      }
       await appKit.open({ view: "Connect" });
     } catch (error) {
       console.error(error);
