@@ -6,7 +6,8 @@ import GetStartedModal from "./components/GetStartedModal";
 import Home from "./pages/Home";
 import MarketDetails from "./pages/MarketDetails";
 import { auth } from "./utils/Auth";
-import { connectMetaMask, getMetaMaskProvider } from "./utils/walletProvider";
+import { appKit } from "./utils/appKit";
+import { setSelectedWalletProvider } from "./utils/walletProvider";
 
 export default function App() {
   const [showModal, setShowModal] = useState(false);
@@ -16,25 +17,23 @@ export default function App() {
 
   const handleConnectWallet = async () => {
     try {
-      const { account: address } = await connectMetaMask();
-      auth.loginWithWallet(address);
-      setAccount(address);
-      setAuthed(true);
-      setShowModal(false);
+      await appKit.open({ view: "Connect" });
     } catch (error) {
       console.error(error);
-      alert(error?.message || "Wallet connection failed");
+      alert(error?.message || "Wallet selector could not be opened.");
     }
   };
 
   const handleRegister = () => {
-    alert("Email registration is not active yet. Please connect your wallet.");
+    alert("Email registration will be enabled after secure backend authentication is connected.");
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try { await appKit.disconnect(); } catch (error) { console.warn("Wallet disconnect:", error); }
     auth.logout();
     setAuthed(false);
     setAccount(null);
+    setSelectedWalletProvider(null);
     window.location.assign("/");
   };
 
@@ -44,26 +43,32 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    const walletProvider = getMetaMaskProvider();
-    if (!walletProvider) return undefined;
-    const handleAccountsChanged = (accounts) => {
-      if (!accounts.length) {
+    const unsubscribeAccount = appKit.subscribeAccount((state) => {
+      if (state?.isConnected && state?.address) {
+        auth.loginWithWallet(state.address);
+        setAccount(state.address);
+        setAuthed(true);
+        setShowModal(false);
+      } else {
         auth.logout();
         setAccount(null);
         setAuthed(false);
-      } else {
-        auth.loginWithWallet(accounts[0]);
-        setAccount(accounts[0]);
-        setAuthed(true);
       }
+    });
+
+    const unsubscribeProviders = appKit.subscribeProviders((state) => {
+      setSelectedWalletProvider(state?.eip155 || null);
+    });
+
+    return () => {
+      if (typeof unsubscribeAccount === "function") unsubscribeAccount();
+      if (typeof unsubscribeProviders === "function") unsubscribeProviders();
     };
-    walletProvider.on?.("accountsChanged", handleAccountsChanged);
-    return () => walletProvider.removeListener?.("accountsChanged", handleAccountsChanged);
   }, []);
 
   return (
     <div className="min-h-screen bg-darkBg text-white">
-      <Header isBNBPrimary={isBNBPrimary} authed={authed} account={account} onConnectWallet={(address) => { auth.loginWithWallet(address); setAccount(address); setAuthed(true); }} onGetStarted={() => setShowModal(true)} onLogout={handleLogout} />
+      <Header isBNBPrimary={isBNBPrimary} authed={authed} account={account} onConnectWallet={handleConnectWallet} onGetStarted={() => setShowModal(true)} onLogout={handleLogout} />
       <Routes>
         <Route path="/" element={authed ? <Home account={account} /> : <Landing onGetStarted={() => setShowModal(true)} />} />
         <Route path="/market/:id" element={<MarketDetails />} />
