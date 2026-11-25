@@ -1,82 +1,64 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { allMarkets } from "../utils/contractHelpers";
 import MarketCard from "../components/MarketCard";
-import { checkPredictionAndResolve } from "../utils/aiAssistant";
+import CreateMarket from "../components/CreateMarket";
 
 export default function Home() {
   const [markets, setMarkets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [filter, setFilter] = useState("All");
 
-  // Fetch markets
-  const fetchMarkets = async () => {
+  const fetchMarkets = useCallback(async () => {
     setLoading(true);
+    setError("");
     try {
-      const data = await allMarkets();   // now points to getAllMarkets()
-      setMarkets(data);
-    } catch (e) {
-      console.error(e);
-      alert("Failed to fetch markets");
+      setMarkets(await allMarkets());
+    } catch (err) {
+      console.error("Failed to fetch markets:", err);
+      setError(err?.shortMessage || err?.message || "Unable to load markets. Connect a wallet on BNB Testnet and verify the contract environment variables.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
-    fetchMarkets(); // load once
+    fetchMarkets();
+  }, [fetchMarkets]);
 
-    // AI Assistant auto-check every 30s
-    const interval = setInterval(async () => {
-      for (let market of markets) {
-        if (market.status === "Open") {
-          await checkPredictionAndResolve(
-            market.id,
-            market.assetSymbol || "MAIZEUSDT",
-            market.targetPrice || 110,
-            market.outcome || "YES"
-          );
-        }
-      }
-      // Refresh markets
-      await fetchMarkets();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, []); // FIXED
-
-  const filteredMarkets =
-    filter === "All"
-      ? markets
-      : markets.filter((m) => m.status.toLowerCase() === filter.toLowerCase());
+  const filteredMarkets = filter === "All"
+    ? markets
+    : markets.filter((market) => market.status.toLowerCase() === filter.toLowerCase());
 
   return (
     <div className="px-6 py-8 max-w-7xl mx-auto text-white">
-      <h1 className="text-3xl font-bold mb-6">Prediction Markets</h1>
-
-      {/* Filters */}
-      <div className="flex gap-3 mb-6">
-        {["All", "Open", "Closed", "Resolved"].map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded ${
-              filter === f ? "bg-apmGreen text-darkBg" : "bg-darkBg/50 text-white/70"
-            }`}
-          >
-            {f}
+      <CreateMarket onCreated={fetchMarkets} />
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <h1 className="text-3xl font-bold">Prediction Markets</h1>
+        <button onClick={fetchMarkets} disabled={loading} className="px-4 py-2 rounded-lg border border-apmGold/50 text-apmGold disabled:opacity-50">
+          {loading ? "Refreshing..." : "Refresh markets"}
+        </button>
+      </div>
+      <div className="flex flex-wrap gap-3 mb-6">
+        {["All", "Open", "Closed", "Resolved"].map((value) => (
+          <button key={value} onClick={() => setFilter(value)}
+            className={`px-4 py-2 rounded ${filter === value ? "bg-apmGreen text-darkBg" : "bg-darkBg/50 text-white/70"}`}>
+            {value}
           </button>
         ))}
       </div>
-
-      {/* Market Cards */}
       {loading ? (
-        <p className="text-center text-white/60">Loading markets...</p>
+        <p className="text-center text-white/60">Loading markets from BNB Testnet...</p>
+      ) : error ? (
+        <div className="rounded-xl border border-red-400/30 bg-red-500/10 p-5 text-red-100">
+          <p>{error}</p>
+          <button onClick={fetchMarkets} className="mt-3 underline">Try again</button>
+        </div>
       ) : filteredMarkets.length === 0 ? (
         <p className="text-center text-white/60">No markets found.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredMarkets.map((market) => (
-            <MarketCard key={market.id} market={market} />
-          ))}
+          {filteredMarkets.map((market) => <MarketCard key={market.id} market={market} />)}
         </div>
       )}
     </div>

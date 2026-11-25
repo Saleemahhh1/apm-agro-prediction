@@ -1,18 +1,20 @@
-import React, { useState } from 'react'
-import { short } from '../utils/format'
+import React from "react";
+import { short } from "../utils/format";
+import { appKit } from "../utils/appKit";
 
-export default function WalletButton(){
-  const [account, setAccount] = useState(null)
-
-  async function connect(){
-    if (!window.ethereum) return alert('Please install MetaMask or Binance Wallet')
-    const accs = await window.ethereum.request({ method: 'eth_requestAccounts' })
-    setAccount(accs[0])
+export default function WalletButton({ account }) {
+  async function handleClick() {
+    try {
+      await appKit.open({ view: "Connect" });
+    } catch (error) {
+      console.error(error);
+      alert(error?.message || "Wallet selector could not be opened.");
+    }
   }
 
   return (
-    <button onClick={connect} className="bg-white text-darkBg px-4 py-2 rounded">
-      { account ? short(account) : 'Connect Wallet' }
+    <button onClick={handleClick} className="bg-white text-darkBg px-4 py-2 rounded">
+      {account ? short(account) : "Connect Wallet"}
     </button>
-  )
+  );
 }
